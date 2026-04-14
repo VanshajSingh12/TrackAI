@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import sendEmail from '../utils/sendEmail.js';
 
 /**
  * @desc Generate JWT Token
@@ -32,7 +33,7 @@ export const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Generate OTP
+    // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
@@ -45,13 +46,39 @@ export const signup = async (req, res) => {
       otpExpires
     });
 
-    // In a real app, send OTP via email
-    console.log(`OTP for ${email}: ${otp}`);
+    // Send OTP via email
+    try {
+      const message = `Your TrackAI verification code is: ${otp}. It will expire in 10 minutes.`;
+      const html = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+          <h2 style="color: #4CAF50;">TrackAI Verification</h2>
+          <p>Welcome to TrackAI! Your verification code is:</p>
+          <div style="font-size: 24px; font-weight: bold; background-color: #f4f4f4; padding: 10px; border-radius: 5px; text-align: center; letter-spacing: 5px;">
+            ${otp}
+          </div>
+          <p style="color: #666; font-size: 12px; margin-top: 20px;">This code will expire in 10 minutes.</p>
+        </div>
+      `;
 
-    res.status(201).json({
-      status: 'success',
-      message: 'User signed up. Please verify OTP sent to your email.'
-    });
+      await sendEmail({
+        email: user.email,
+        subject: 'Verify your TrackAI Account',
+        message,
+        html
+      });
+
+      res.status(201).json({
+        status: 'success',
+        message: 'User signed up. Please verify OTP sent to your email.'
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      // In a real scenario, you might want to handle this differently (e.g., allow resending OTP)
+      res.status(201).json({
+        status: 'success',
+        message: 'User signed up, but email delivery failed. Please check server logs for OTP.'
+      });
+    }
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });
   }
