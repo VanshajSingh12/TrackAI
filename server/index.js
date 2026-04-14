@@ -28,8 +28,8 @@ app.get('/', (req, res) => {
 });
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Connected to MongoDB'))
+mongoose.connect(process.env.MONGODB_URL)
+  .then(() => console.log('Connected to MongoDB Database'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Error Handling Middleware
