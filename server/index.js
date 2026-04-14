@@ -4,6 +4,10 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 
+// Route imports
+import authRoutes from './routes/authRoutes.js';
+import transactionRoutes from './routes/transactionRoutes.js';
+
 // Load environment variables
 dotenv.config();
 
@@ -15,15 +19,18 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/transactions', transactionRoutes);
+
+app.get('/', (req, res) => {
+  res.json({ message: 'TrackAI API is running' });
+});
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
-
-// Routes placeholder
-app.get('/', (req, res) => {
-  res.json({ message: 'TrackAI API is running' });
-});
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
