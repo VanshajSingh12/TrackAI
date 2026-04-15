@@ -66,3 +66,48 @@ export const createTransaction = async (req, res) => {
     });
   }
 };
+
+/**
+ * @desc Get all transactions for the logged-in user with financial summary
+ * @route GET /api/transactions
+ * @access Private
+ */
+export const getAllTransactions = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Find all transactions for user, sorted by newest first
+    const transactions = await Transaction.find({ userId }).sort({ date: -1 });
+
+    // Calculate totals
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    transactions.forEach(t => {
+      if (t.type === 'income') {
+        totalIncome += t.amount;
+      } else {
+        totalExpense += t.amount;
+      }
+    });
+
+    const balance = totalIncome - totalExpense;
+
+    res.json({
+      status: 'success',
+      count: transactions.length,
+      summary: {
+        totalIncome,
+        totalExpense,
+        balance
+      },
+      data: transactions
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: error.message || 'Failed to fetch transactions.'
+    });
+  }
+};
+
