@@ -1,4 +1,5 @@
 import Transaction from '../models/Transaction.js';
+import { parseTransaction } from '../utils/geminiParser.js';
 
 /**
  * @desc Create a new transaction
@@ -7,13 +8,30 @@ import Transaction from '../models/Transaction.js';
  */
 export const createTransaction = async (req, res) => {
   try {
-    const { amount, description, category, type } = req.body;
+    let { amount, description, category, type, text } = req.body;
 
-    // Validate required fields (including 'type' which is required in our schema)
+    // If natural language text is provided, use Gemini to parse it
+    if (text) {
+      try {
+        const parsedData = await parseTransaction(text);
+        amount = parsedData.amount;
+        description = parsedData.description;
+        category = parsedData.category;
+        type = parsedData.type;
+      } catch (aiError) {
+        return res.status(422).json({
+          status: 'error',
+          message: 'AI failed to understand the text. Please provide structured data or try again.',
+          error: aiError.message
+        });
+      }
+    }
+
+    // Validate required fields
     if (!amount || !category || !type) {
       return res.status(400).json({
         status: 'error',
-        message: 'Please provide amount, category, and type (expense/income).'
+        message: 'Please provide amount, category, and type (or natural language text).'
       });
     }
 
