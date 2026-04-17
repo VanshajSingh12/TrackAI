@@ -58,3 +58,47 @@ export const parseTransaction = async (text) => {
     throw new Error("Failed to parse transaction with AI.");
   }
 };
+
+/**
+ * @desc Provides financial advice based on transaction history.
+ * @param {string} query - The user's question
+ * @param {Array} transactions - List of user transactions
+ * @param {Array} history - Previous chat history
+ * @returns {Promise<string>} - Gemini's response
+ */
+export const getFinancialAdvice = async (query, transactions, history = []) => {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const transactionContext = transactions.map(t => 
+      `${t.date.toISOString().split('T')[0]}: ${t.type} of ${t.amount} for ${t.description || t.category} (${t.category})`
+    ).join('\n');
+
+    const prompt = `
+      You are a personal financial advisor for TrackAI. 
+      Here is the user's recent transaction history:
+      ${transactionContext}
+
+      User Question: "${query}"
+
+      Provide a helpful, concise, and professional response. 
+      If they ask about spending, summarize their data. 
+      If they ask for advice, give actionable financial tips based on their patterns.
+      Keep it under 150 words.
+    `;
+
+    const chat = model.startChat({
+      history: history.map(h => ({
+        role: h.role === 'user' ? 'user' : 'model',
+        parts: [{ text: h.content }],
+      })),
+    });
+
+    const result = await chat.sendMessage(prompt);
+    const response = await result.response;
+    return response.text();
+  } catch (error) {
+    console.error("Gemini Advice Error:", error);
+    throw new Error("Failed to get financial advice from AI.");
+  }
+};
