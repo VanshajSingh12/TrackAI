@@ -21,7 +21,7 @@ export const parseTransaction = async (text) => {
     const categories = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Education', 'Other'];
 
     const prompt = `
-      You are a financial assistant. Analyze the following text and extract transaction details: "${text}".
+      You are a financial advisor. Analyze the following text and extract transaction details: "${text}".
       
       Return ONLY a raw JSON object with exactly these keys:
       - amount (Number)
@@ -60,36 +60,48 @@ export const parseTransaction = async (text) => {
 };
 
 /**
- * @desc Provides financial advice based on transaction history.
+ * @desc Provides financial advice based on transaction history, budgets, and balance.
  * @param {string} query - The user's question
  * @param {Array} transactions - List of user transactions
  * @param {Array} history - Previous chat history
+ * @param {Array} budgets - List of user budgets
+ * @param {number} totalBalance - User's overall balance
  * @returns {Promise<string>} - Gemini's response
  */
-export const getFinancialAdvice = async (query, transactions, history = []) => {
+export const getFinancialAdvice = async (query, transactions, history = [], budgets = [], totalBalance = 0) => {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
-    const transactionContext = transactions.map(t => 
+    const transactionContext = transactions.map(t =>
       `${t.date.toISOString().split('T')[0]}: ${t.type} of ${t.amount} for ${t.description || t.category} (${t.category})`
+    ).join('\n');
+
+    const budgetContext = budgets.map(b =>
+      `${b.category}: ${b.limit} per ${b.period}`
     ).join('\n');
 
     const prompt = `
       You are a personal financial advisor for TrackAI. 
-      Here is the user's recent transaction history:
+      
+      User's Total Current Balance: ${totalBalance}
+
+      User's Budget Limits:
+      ${budgetContext || 'No budgets set yet.'}
+
+      Recent Transaction History (Last 50):
       ${transactionContext}
 
       User Question: "${query}"
 
       Provide a helpful, concise, and professional response. 
-      If they ask about spending, summarize their data. 
-      If they ask for advice, give actionable financial tips based on their patterns.
+      Consider the total balance when answering high-level questions about what they can afford.
+      Use the budget information to tell the user if they are over or under their limits.
       Keep it under 150 words.
     `;
 
     const chat = model.startChat({
       history: history.map(h => ({
-        role: h.role === 'user' ? 'user' : 'model',
+        role: h.role,
         parts: [{ text: h.content }],
       })),
     });

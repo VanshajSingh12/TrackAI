@@ -111,3 +111,62 @@ export const getAllTransactions = async (req, res) => {
   }
 };
 
+/**
+ * @desc Update a transaction
+ * @route PUT /api/transactions/:id
+ * @access Private
+ */
+export const updateTransaction = async (req, res) => {
+  try {
+    const { amount, description, category, type, date } = req.body;
+    const transaction = await Transaction.findById(req.params.id);
+
+    if (!transaction) {
+      return res.status(404).json({ status: 'error', message: 'Transaction not found.' });
+    }
+
+    if (transaction.userId.toString() !== req.user.id) {
+      return res.status(401).json({ status: 'error', message: 'Not authorized.' });
+    }
+
+    transaction.amount = amount || transaction.amount;
+    transaction.description = description || transaction.description;
+    transaction.category = category || transaction.category;
+    transaction.type = type || transaction.type;
+    transaction.date = date || transaction.date;
+
+    const updatedTransaction = await transaction.save();
+
+    res.json({
+      status: 'success',
+      data: updatedTransaction
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+};
+
+/**
+ * @desc Delete a transaction
+ * @route DELETE /api/transactions/:id
+ * @access Private
+ */
+export const deleteTransaction = async (req, res) => {
+  try {
+    const transaction = await Transaction.findById(req.params.id);
+
+    if (!transaction) {
+      return res.status(404).json({ status: 'error', message: 'Transaction not found.' });
+    }
+
+    if (transaction.userId.toString() !== req.user.id) {
+      return res.status(401).json({ status: 'error', message: 'Not authorized.' });
+    }
+
+    await transaction.deleteOne();
+    res.json({ status: 'success', message: 'Transaction removed.' });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+};
+
