@@ -1,5 +1,6 @@
 import ChatHistory from '../models/ChatHistory.js';
 import Transaction from '../models/Transaction.js';
+import Budget from '../models/Budget.js';
 import { getFinancialAdvice } from '../utils/geminiParser.js';
 
 /**
@@ -16,8 +17,21 @@ export const getChatAdvice = async (req, res) => {
       return res.status(400).json({ status: 'error', message: 'Query is required.' });
     }
 
-    // Fetch user's transactions for context
+    // Fetch user's transactions for context (limited for AI)
     const transactions = await Transaction.find({ userId }).sort({ date: -1 }).limit(50);
+
+    // Calculate actual total balance (across all transactions)
+    const allTransactions = await Transaction.find({ userId });
+    let totalIncome = 0;
+    let totalExpense = 0;
+    allTransactions.forEach(t => {
+      if (t.type === 'income') totalIncome += t.amount;
+      else totalExpense += t.amount;
+    });
+    const totalBalance = totalIncome - totalExpense;
+
+    // Fetch user's budgets for context
+    const budgets = await Budget.find({ userId });
 
     // Fetch last 5 chat messages for context
     const history = await ChatHistory.find({ userId }).sort({ createdAt: -1 }).limit(5);
@@ -26,12 +40,12 @@ export const getChatAdvice = async (req, res) => {
     const chronologicalHistory = history.reverse();
 
     // Get advice from Gemini
-    const advice = await getFinancialAdvice(query, transactions, chronologicalHistory);
+    const advice = await getFinancialAdvice(query, transactions, chronologicalHistory, budgets, totalBalance);
 
     // Save user message and AI response to history
     await ChatHistory.create([
       { userId, role: 'user', content: query },
-      { userId, role: 'assistant', content: advice }
+      { userId, role: 'model', content: advice }
     ]);
 
     res.json({
