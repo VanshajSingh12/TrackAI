@@ -106,6 +106,7 @@ export const verifyOTP = async (req, res) => {
     res.json({
       status: 'success',
       token: generateToken(user._id),
+      user: { id: user._id, username: user.username, email: user.email },
       message: 'Account verified successfully.'
     });
   } catch (error) {
