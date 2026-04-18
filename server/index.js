@@ -4,14 +4,14 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 
+// Load environment variables
+dotenv.config();
+
 // Route imports
 import authRoutes from './routes/authRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import budgetRoutes from './routes/budgetRoutes.js';
-
-// Load environment variables
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
