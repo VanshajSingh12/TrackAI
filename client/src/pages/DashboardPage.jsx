@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Wallet, LogOut, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { Navbar } from '../components/Navbar';
 import { SummaryGrid } from '../components/DashboardSummary';
 import { SpendingPieChart } from '../components/FinancialCharts';
 import { TransactionList } from '../components/TransactionList';
@@ -29,15 +30,13 @@ export default function DashboardPage() {
       setSummary(data.summary);
     } catch (err) {
       console.error('Error fetching data:', err);
-      if (err.response?.status === 401) handleLogout();
+      if (err.response?.status === 401) {
+        localStorage.clear();
+        window.location.href = '/login';
+      }
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    window.location.href = '/login';
   };
 
   const handleAiSubmit = async (e) => {
@@ -72,31 +71,12 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
-      {/* Header */}
-      <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
-        <div className="flex items-center space-x-2">
-          <div className="bg-primary p-1.5 rounded-lg shadow-md">
-            <Wallet className="text-white w-6 h-6" />
-          </div>
-          <span className="text-2xl font-black text-gray-900 tracking-tight italic">TrackAI</span>
-        </div>
-        
-        <div className="flex items-center space-x-6">
-          <div className="text-right hidden sm:block">
-            <p className="text-xs text-gray-400 font-bold uppercase">Member</p>
-            <p className="text-sm font-bold text-gray-900">{user.username}</p>
-          </div>
-          <button onClick={handleLogout} className="p-2.5 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-gray-100">
-            <LogOut className="w-5 h-5" />
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-8">
         <SummaryGrid summary={summary} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content (Transactions & Input) */}
           <div className="lg:col-span-2 space-y-8">
             <AIInput 
               value={aiInput} 
@@ -108,7 +88,6 @@ export default function DashboardPage() {
             <TransactionList transactions={transactions} />
           </div>
 
-          {/* Sidebar (AI Chat) */}
           <div className="lg:col-span-1">
             <AIChat />
           </div>
