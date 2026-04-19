@@ -16,29 +16,29 @@ import budgetRoutes from './routes/budgetRoutes.js';
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// // --- UPDATED CORS CONFIGURATION ---
-// const allowedOrigins = [
-//   'http://localhost:5173',    // Local Vite development
-//   process.env.FRONTEND_URL     // Your production Vercel URL
-// ];
+// --- UPDATED CORS CONFIGURATION ---
+const allowedOrigins = [
+  'http://localhost:5173',    // Local Vite development
+  process.env.FRONTEND_URL     // Your production Vercel URL
+];
 
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     // Allow requests with no origin (like mobile apps or curl)
-//     if (!origin) return callback(null, true);
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
 
-//     if (allowedOrigins.indexOf(origin) !== -1) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   allowedHeaders: ['Content-Type', 'Authorization']
-// }));
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 // ----------------------------------
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
