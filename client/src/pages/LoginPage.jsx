@@ -55,7 +55,15 @@ export default function LoginPage() {
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="mt-2">
+            {/* <Button type="button" disabled={loading} className="mt-2">
+              {loading ? 'Logging in...' : 'Sign In'}
+            </Button> */}
+            <Button
+              type="button" // Change from "submit" to "button"
+              disabled={loading}
+              className="mt-2"
+              onClick={handleSubmit} // Trigger the function directly on click
+            >
               {loading ? 'Logging in...' : 'Sign In'}
             </Button>
 
