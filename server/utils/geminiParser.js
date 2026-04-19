@@ -19,7 +19,11 @@ export const parseTransaction = async (text) => {
       const categories = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Education', 'Other'];
 
       const prompt = `
-        You are a precise financial data extractor. Analyze: "${text}"
+        You are a specialized financial data extractor for TrackAI. 
+        STRICT SCOPE: You ONLY process financial transactions. If the input is unrelated to money, spending, or income (like cooking or coding), treat it as unrecognized input.
+
+        Analyze the following text: "${text}"
+        
         Return ONLY a raw JSON object with:
         - amount (Number)
         - description (String)
@@ -27,10 +31,10 @@ export const parseTransaction = async (text) => {
         - type (String: 'income' or 'expense')
 
         Rules:
-        1. If non-financial, return amount 0.
+        1. If non-financial or unrelated to money, return amount: 0 and description: "Unrecognized input".
         2. Category unclear = 'Other'.
-        3. No markdown. No extra text.
-        4. Gibberish = amount 0, description "Unrecognized input".
+        3. No markdown, no conversational text. Just the raw JSON.
+        4. Assume 'expense' unless keywords like 'salary', 'earned', or 'income' are present.
       `;
 
       const result = await model.generateContent(prompt);
@@ -90,7 +94,11 @@ export const getFinancialAdvice = async (query, transactions, history = [], budg
       ).join('\n');
 
       const prompt = `
-        You are a personal financial advisor for TrackAI. 
+        You are a specialized personal financial advisor for TrackAI. 
+
+        STRICT SCOPE RULE: You ONLY answer questions related to personal finance, budgeting, spending habits, and the user's provided data. 
+        DO NOT answer questions about cooking, coding, history, general trivia, or any topic outside of finance.
+
         Current Balance: $${totalBalance.toLocaleString()}
         Budgets: ${budgetContext || 'NO BUDGETS SET.'}
         --- FINANCIAL SUMMARY ---
@@ -102,8 +110,10 @@ export const getFinancialAdvice = async (query, transactions, history = [], budg
 
         Rules:
         1. Helpful, concise response (under 150 words).
-        2. No hallucinations. If data is missing, ask the user to log more.
+        2. IF THE QUESTION IS OUT OF SCOPE: Politely state that you are a financial advisor and can only assist with money-related queries.
+        3. No hallucinations. If data is missing, ask the user to log more.
       `;
+
 
       const chat = model.startChat({
         history: history.map(h => ({

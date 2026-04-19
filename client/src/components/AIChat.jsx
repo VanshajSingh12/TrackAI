@@ -67,7 +67,7 @@ export function AIChat() {
           <span className="text-[10px] text-gray-400 font-bold uppercase">Online</span>
         </div>
       </div>
-      
+
       <div className="flex-1 p-4 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-gray-200">
         {historyLoading ? (
           <div className="h-full flex items-center justify-center"><Loader2 className="animate-spin text-gray-300" /></div>
@@ -77,13 +77,12 @@ export function AIChat() {
             <p className="text-sm text-gray-500">Ask me about your budget or spending habits!</p>
           </div>
         ) : (
-          messages.map((m, i) => (
+          messages.map((m, i) => (//ai response will be in form of many messages(an array of messages)
             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${
-                m.role === 'user' 
-                  ? 'bg-primary text-white rounded-tr-none shadow-md' 
+              <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${m.role === 'user'
+                  ? 'bg-primary text-white rounded-tr-none shadow-md'
                   : 'bg-gray-100 text-gray-700 rounded-tl-none border border-gray-200'
-              }`}>
+                }`}>
                 <div className="flex items-center space-x-1 mb-1 opacity-70">
                   {m.role === 'user' ? <User className="w-3 h-3" /> : <Bot className="w-3 h-3" />}
                   <span className="text-[10px] font-bold uppercase tracking-tighter">
@@ -115,8 +114,8 @@ export function AIChat() {
             disabled={loading}
             className="w-full pl-4 pr-12 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all"
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={!input.trim() || loading}
             className="absolute right-2 top-1.5 p-1.5 bg-primary text-white rounded-lg hover:bg-secondary disabled:opacity-50 shadow-sm transition-all active:scale-90"
           >
