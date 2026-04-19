@@ -27,13 +27,13 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
       <Navbar />
-      <div className="py-12">
+      <div className="flex-1 flex items-center justify-center p-4">
         <AuthCard title="Create Account" subtitle="Join TrackAI to track expenses intelligently">
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            {error && <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-200">{error}</div>}
-            <div className="space-y-4">
+          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+            {error && <div className="p-3 text-xs text-red-600 bg-red-50 rounded-md border border-red-200">{error}</div>}
+            <div className="space-y-3">
               <InputField
                 label="Full Name"
                 placeholder="John Doe"
@@ -56,11 +56,11 @@ export default function SignupPage() {
               />
             </div>
 
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="mt-2">
               {loading ? 'Creating Account...' : 'Sign Up'}
             </Button>
 
-            <div className="text-center text-sm">
+            <div className="text-center text-xs pt-2">
               <span className="text-gray-600">Already have an account? </span>
               <Link to="/login" className="font-medium text-primary hover:text-secondary">
                 Log in
