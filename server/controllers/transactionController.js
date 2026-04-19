@@ -12,6 +12,12 @@ export const createTransaction = async (req, res) => {
 
     // If natural language text is provided, use Gemini to parse it
     if (text) {
+      if (text.trim() === '') {
+        return res.status(400).json({ status: 'error', message: 'Text input cannot be empty.' });
+      }
+      if (text.length > 500) {
+        return res.status(400).json({ status: 'error', message: 'Text input is too long (max 500 characters).' });
+      }
       try {
         const parsedData = await parseTransaction(text);
         amount = parsedData.amount;

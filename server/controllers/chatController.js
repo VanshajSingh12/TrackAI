@@ -13,8 +13,15 @@ export const getChatAdvice = async (req, res) => {
     const { query } = req.body;
     const userId = req.user.id;
 
-    if (!query) {
+    if (!query || query.trim() === '') {
       return res.status(400).json({ status: 'error', message: 'Query is required.' });
+    }
+
+    if (query.length > 500) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'Query is too long. Please keep it under 500 characters.' 
+      });
     }
 
     // Fetch user's transactions for context (limited for AI)
