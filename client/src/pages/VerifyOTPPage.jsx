@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { AuthCard } from '../components/AuthCard';
 import { InputField, Button } from '../components/FormElements';
+import api from '../utils/api';
+
 
 export default function VerifyOTPPage() {
   const { login } = useAuth();
@@ -18,12 +20,12 @@ export default function VerifyOTPPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) return setError('Email missing. Please sign up again.');
-    
+
     setError('');
     setLoading(true);
 
     try {
-      const { data } = await axios.post('/api/auth/verify-otp', { email, otp });
+      const { data } = await api.post('/api/auth/verify-otp', { email, otp });
       login(data.user, data.token);
       navigate('/dashboard');
     } catch (err) {

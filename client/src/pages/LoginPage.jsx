@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { AuthCard } from '../components/AuthCard';
 import { InputField, Button } from '../components/FormElements';
 import { Navbar } from '../components/Navbar';
+import api from '../utils/api';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -20,7 +21,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data } = await axios.post('/api/auth/login', { email, password });
+      const { data } = api.post('/api/auth/login', { email, password });
       login(data.user, data.token);
       navigate('/dashboard');
     } catch (err) {

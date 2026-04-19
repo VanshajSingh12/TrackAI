@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MessageSquare, Send, Loader2, Bot, User } from 'lucide-react';
+import api from '../utils/api';
 
 export function AIChat() {
   const [messages, setMessages] = useState([]);
@@ -20,7 +21,7 @@ export function AIChat() {
   const fetchHistory = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get('/api/chat', {
+      const { data } = await apis.get('/api/chat', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessages(data.data);
@@ -44,7 +45,7 @@ export function AIChat() {
 
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.post('/api/chat', { query: userMsg }, {
+      const { data } = await api.post('/api/chat', { query: userMsg }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessages(prev => [...prev, { role: 'model', content: data.data }]);
@@ -80,8 +81,8 @@ export function AIChat() {
           messages.map((m, i) => (//ai response will be in form of many messages(an array of messages)
             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${m.role === 'user'
-                  ? 'bg-primary text-white rounded-tr-none shadow-md'
-                  : 'bg-gray-100 text-gray-700 rounded-tl-none border border-gray-200'
+                ? 'bg-primary text-white rounded-tr-none shadow-md'
+                : 'bg-gray-100 text-gray-700 rounded-tl-none border border-gray-200'
                 }`}>
                 <div className="flex items-center space-x-1 mb-1 opacity-70">
                   {m.role === 'user' ? <User className="w-3 h-3" /> : <Bot className="w-3 h-3" />}

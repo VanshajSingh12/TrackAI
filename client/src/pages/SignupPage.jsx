@@ -4,6 +4,8 @@ import axios from 'axios';
 import { AuthCard } from '../components/AuthCard';
 import { InputField, Button } from '../components/FormElements';
 import { Navbar } from '../components/Navbar';
+import api from '../utils/api';
+
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
@@ -17,7 +19,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      await axios.post('/api/auth/signup', formData);
+      await api.post('/api/auth/signup', formData);
       navigate('/verify-otp', { state: { email: formData.email } });
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed. Please try again.');

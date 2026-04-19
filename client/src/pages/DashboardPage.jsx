@@ -8,6 +8,7 @@ import { SpendingPieChart } from '../components/FinancialCharts';
 import { TransactionList } from '../components/TransactionList';
 import { AIInput } from '../components/AIInput';
 import { AIChat } from '../components/AIChat';
+import api from '../utils/api';
 
 export default function DashboardPage() {
   const { user, token, logout } = useAuth();
@@ -23,7 +24,7 @@ export default function DashboardPage() {
 
   const fetchData = async () => {
     try {
-      const { data } = await axios.get('/api/transactions', {
+      const { data } = await api.get('/api/transactions', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTransactions(data.data);
@@ -43,7 +44,7 @@ export default function DashboardPage() {
     setAiLoading(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.post('/api/transactions', { text: aiInput }, {
+      await api.post('/api/transactions', { text: aiInput }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAiInput('');
@@ -75,11 +76,11 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <AIInput 
-              value={aiInput} 
-              onChange={setAiInput} 
-              onSubmit={handleAiSubmit} 
-              loading={aiLoading} 
+            <AIInput
+              value={aiInput}
+              onChange={setAiInput}
+              onSubmit={handleAiSubmit}
+              loading={aiLoading}
             />
             <SpendingPieChart transactions={transactions} />
             <TransactionList transactions={transactions} />
