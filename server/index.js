@@ -18,18 +18,26 @@ const PORT = process.env.PORT || 4000;
 
 // --- UPDATED CORS CONFIGURATION ---
 const allowedOrigins = [
-  'http://localhost:5173',    // Local Vite development
-  process.env.FRONTEND_URL     // Your production Vercel URL
+  'http://localhost:5173',
+  process.env.FRONTEND_URL
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
+    // 1. Allow internal requests (like Postman or server-to-server)
     if (!origin) return callback(null, true);
 
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // 2. Check if the origin is in our allowed list
+    const isAllowed = allowedOrigins.includes(origin);
+
+    // 3. Allow ANY Vercel preview deployment from your account
+    // This solves the issue with the random characters in the URL
+    const isVercelPreview = origin.endsWith('.vercel.app');
+
+    if (isAllowed || isVercelPreview) {
       callback(null, true);
     } else {
+      console.log("Blocked by CORS. Origin was:", origin); // Helps you debug in Render logs
       callback(new Error('Not allowed by CORS'));
     }
   },
