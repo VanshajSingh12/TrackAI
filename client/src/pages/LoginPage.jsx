@@ -21,7 +21,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data } = api.post('/api/auth/login', { email, password });
+      const { data } = await api.post('/api/auth/login', { email, password });
       login(data.user, data.token);
       navigate('/dashboard');
     } catch (err) {
