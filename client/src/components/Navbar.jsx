@@ -1,15 +1,9 @@
 import { Wallet, LogOut, User as UserIcon } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export function Navbar() {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
-  const isAuthenticated = !!localStorage.getItem('token');
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate('/login');
-  };
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
@@ -30,7 +24,7 @@ export function Navbar() {
               </p>
             </div>
             <button 
-              onClick={handleLogout} 
+              onClick={logout} 
               className="p-2.5 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-gray-100 group"
               title="Logout"
             >

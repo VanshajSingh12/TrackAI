@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import { AuthCard } from '../components/AuthCard';
 import { InputField, Button } from '../components/FormElements';
 
 export default function VerifyOTPPage() {
+  const { login } = useAuth();
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,8 +24,7 @@ export default function VerifyOTPPage() {
 
     try {
       const { data } = await axios.post('/api/auth/verify-otp', { email, otp });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      login(data.user, data.token);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Verification failed.');

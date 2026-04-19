@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { Navbar } from '../components/Navbar';
 import { SummaryGrid } from '../components/DashboardSummary';
 import { SpendingPieChart } from '../components/FinancialCharts';
@@ -9,7 +10,7 @@ import { AIInput } from '../components/AIInput';
 import { AIChat } from '../components/AIChat';
 
 export default function DashboardPage() {
-  const [user] = useState(JSON.parse(localStorage.getItem('user') || '{}'));
+  const { user, token, logout } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({ totalIncome: 0, totalExpense: 0, balance: 0 });
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,6 @@ export default function DashboardPage() {
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem('token');
       const { data } = await axios.get('/api/transactions', {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -30,10 +30,7 @@ export default function DashboardPage() {
       setSummary(data.summary);
     } catch (err) {
       console.error('Error fetching data:', err);
-      if (err.response?.status === 401) {
-        localStorage.clear();
-        window.location.href = '/login';
-      }
+      if (err.response?.status === 401) logout();
     } finally {
       setLoading(false);
     }
