@@ -21,7 +21,7 @@ export function AIChat() {
   const fetchHistory = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await apis.get('/api/chat', {
+      const { data } = await api.get('/api/chat', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessages(data.data);
