@@ -4,12 +4,12 @@ export function AIInput({ value, onChange, onSubmit, loading }) {
   return (
     <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 bg-gradient-to-r from-primary/5 to-transparent">
       <h2 className="text-lg font-semibold mb-4 flex items-center text-gray-900">
-        <PlusCircle className="mr-2 text-primary w-5 h-5" /> Quick Log with AI
+        <PlusCircle className="mr-2 text-primary w-5 h-5" /> Add Transaction
       </h2>
       <form onSubmit={onSubmit} className="relative">
         <input
           type="text"
-          placeholder="Try 'Coffee 5' or 'Earned 2000 from Freelance'"
+          placeholder="Enter Transaction"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full pl-4 pr-12 py-4 bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-700"
