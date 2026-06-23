@@ -228,7 +228,7 @@ export default function DashboardPage() {
                 <div className="bg-gradient-to-br from-slate-900 to-emerald-950 text-white rounded-2xl p-6 shadow-sm border border-emerald-800/20">
                   <div className="flex items-center gap-2 mb-3">
                     <Sparkles className="w-5 h-5 text-emerald-400" />
-                    <h3 className="text-lg font-bold tracking-tight text-emerald-400">Gemini Sustainability Insights</h3>
+                    <h3 className="text-lg font-bold tracking-tight text-emerald-400">Sustainability Insights</h3>
                   </div>
                   <p className="text-slate-300 text-xs leading-relaxed mb-6">
                     Dynamic recommendations curated by Gemini based on your personal ledger history, aligning with
