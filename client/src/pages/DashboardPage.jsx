@@ -114,7 +114,7 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
-              EcoTrack AI <span className="text-emerald-500">🌱</span>
+              Track AI <span className="text-emerald-500">🌱</span>
             </h1>
             <p className="text-gray-500 mt-1">Intelligent Consumption & Carbon Footprint Ledger</p>
           </div>
@@ -124,8 +124,8 @@ export default function DashboardPage() {
             <button
               onClick={() => setActiveTab('financial')}
               className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${activeTab === 'financial'
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'text-gray-500 hover:text-gray-900'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'text-gray-500 hover:text-gray-900'
                 }`}
             >
               Financial Ledger
@@ -133,8 +133,8 @@ export default function DashboardPage() {
             <button
               onClick={() => setActiveTab('sustainability')}
               className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'sustainability'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'text-gray-500 hover:text-emerald-600'
+                ? 'bg-emerald-600 text-white shadow-sm'
+                : 'text-gray-500 hover:text-emerald-600'
                 }`}
             >
               Sustainability Hub
@@ -296,10 +296,10 @@ export default function DashboardPage() {
                           <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all duration-500 ${item.category.toLowerCase().includes('transport')
-                                  ? 'bg-red-500'
-                                  : item.category.toLowerCase().includes('food')
-                                    ? 'bg-amber-500'
-                                    : 'bg-emerald-500'
+                                ? 'bg-red-500'
+                                : item.category.toLowerCase().includes('food')
+                                  ? 'bg-amber-500'
+                                  : 'bg-emerald-500'
                                 }`}
                               style={{ width: `${percentageWidth}%` }}
                             ></div>
