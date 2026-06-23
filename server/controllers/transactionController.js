@@ -10,6 +10,13 @@ export const createTransaction = async (req, res) => {
   try {
     let { amount, description, category, type, text } = req.body;
 
+    let sustainability = {
+      sdg_alignment: "SDG 12: Responsible Consumption",
+      co2_footprint_kg: 0.1,
+      sdg_rating: "C",
+      eco_insight: "Neutral environmental impact. Practice mindful spending."
+    };
+
     // If natural language text is provided, use Gemini to parse it
     if (text) {
       if (text.trim() === '') {
@@ -24,12 +31,40 @@ export const createTransaction = async (req, res) => {
         description = parsedData.description;
         category = parsedData.category;
         type = parsedData.type;
+        if (parsedData.sustainability) {
+          sustainability = parsedData.sustainability;
+        }
       } catch (aiError) {
         return res.status(422).json({
           status: 'error',
           message: 'AI failed to understand the text. Please provide structured data or try again.',
           error: aiError.message
         });
+      }
+    } else {
+      // Add Heuristics for Manual Inputs
+      const catLower = (category || '').toLowerCase();
+      if (/transport|cab|fuel/i.test(catLower)) {
+        sustainability = {
+          sdg_alignment: "SDG 13: Climate Action",
+          co2_footprint_kg: 4.5,
+          sdg_rating: "D",
+          eco_insight: "Consider carpooling, public transit, or biking to lower your carbon emissions."
+        };
+      } else if (/food|dining|restaurant|out/i.test(catLower)) {
+        sustainability = {
+          sdg_alignment: "SDG 12: Responsible Consumption",
+          co2_footprint_kg: 1.2,
+          sdg_rating: "C",
+          eco_insight: "Opt for package-free options or dine-in to avoid single-use packaging waste."
+        };
+      } else if (/grocer|organic/i.test(catLower)) {
+        sustainability = {
+          sdg_alignment: "SDG 12: Responsible Consumption",
+          co2_footprint_kg: 0.2,
+          sdg_rating: "A",
+          eco_insight: "Buying groceries and organic food is highly sustainable and supports green habits."
+        };
       }
     }
 
@@ -56,7 +91,8 @@ export const createTransaction = async (req, res) => {
       amount,
       description,
       category,
-      type
+      type,
+      sustainability
     });
 
     const savedTransaction = await newTransaction.save();

@@ -12,6 +12,8 @@ import authRoutes from './routes/authRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import budgetRoutes from './routes/budgetRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
+
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -55,6 +57,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/budgets', budgetRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'TrackAI API is running' });
