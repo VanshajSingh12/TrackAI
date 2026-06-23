@@ -29,6 +29,11 @@ export const parseTransaction = async (text) => {
         - description (String)
         - category (String: must be one of: ${categories.join(', ')})
         - type (String: 'income' or 'expense')
+        - sustainability (Object: containing nested keys)
+          - sdg_alignment (String: maps the expense to a UN SDG, e.g., "SDG 12: Responsible Consumption", "SDG 13: Climate Action", "SDG 7: Clean Energy", or "SDG 3: Good Health")
+          - co2_footprint_kg (Number: estimated carbon footprint in kilograms, e.g., low-impact local food is 0.1, restaurant delivery is 1.2, diesel cab is 4.5, airline flight is 150.0. Income is 0)
+          - sdg_rating (String: must be one of 'A', 'B', 'C', 'D', 'F' depending on sustainability impact. A is highly sustainable/reusable, B is low footprint, C is average/neutral, D is elevated impact, and F is heavy fossil fuel consumption/waste)
+          - eco_insight (String: a single concise sentence suggesting a cleaner/more sustainable alternative or praising their green choice)
 
         Rules:
         1. If non-financial or unrelated to money, return amount: 0 and description: "Unrecognized input".
@@ -47,6 +52,21 @@ export const parseTransaction = async (text) => {
 
       const parsedData = JSON.parse(responseText);
       if (!categories.includes(parsedData.category)) parsedData.category = 'Other';
+
+      if (!parsedData.sustainability) {
+        parsedData.sustainability = {
+          sdg_alignment: "SDG 12: Responsible Consumption",
+          co2_footprint_kg: 0.1,
+          sdg_rating: "C",
+          eco_insight: "Neutral environmental impact. Practice mindful spending."
+        };
+      } else {
+        parsedData.sustainability.sdg_alignment = parsedData.sustainability.sdg_alignment || "SDG 12: Responsible Consumption";
+        parsedData.sustainability.co2_footprint_kg = Number(parsedData.sustainability.co2_footprint_kg) || 0;
+        parsedData.sustainability.sdg_rating = ['A', 'B', 'C', 'D', 'F'].includes(parsedData.sustainability.sdg_rating) ? parsedData.sustainability.sdg_rating : 'C';
+        parsedData.sustainability.eco_insight = parsedData.sustainability.eco_insight || "Practice mindful spending.";
+      }
+
       return parsedData;
     })();
 
