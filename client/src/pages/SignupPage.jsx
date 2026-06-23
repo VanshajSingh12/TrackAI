@@ -32,7 +32,7 @@ export default function SignupPage() {
     <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
       <Navbar />
       <div className="flex-1 flex items-center justify-center p-4">
-        <AuthCard title="Create Account" subtitle="Join TrackAI to track expenses intelligently">
+        <AuthCard title="Create Account" subtitle="Join TrackAI to track expenses and Carbon Footprints intelligently">
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             {error && <div className="p-3 text-xs text-red-600 bg-red-50 rounded-md border border-red-200">{error}</div>}
             <div className="space-y-3">

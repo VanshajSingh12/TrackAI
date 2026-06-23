@@ -35,7 +35,7 @@ export default function LoginPage() {
     <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
       <Navbar />
       <div className="flex-1 flex items-center justify-center p-4">
-        <AuthCard title="Welcome Back" subtitle="Log in to manage your finances">
+        <AuthCard title="Welcome Back" subtitle="Log in to manage your finances and track Carbon Footprints">
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             {error && <div className="p-3 text-xs text-red-600 bg-red-50 rounded-md border border-red-200">{error}</div>}
             <div className="space-y-3">
